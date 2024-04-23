@@ -1,7 +1,7 @@
 // import Image from "next/image";
 
 function Second() {
-  return <div>Second</div>;
+  return <div>麻衣子♡</div>;
 }
 
 export default Second;

@@ -2,7 +2,7 @@
 import React from 'react';
 
 function Second() {
-  return <div>Second</div>;
+  return <div>麻衣子♡</div>;
 }
 
 export default Second;
