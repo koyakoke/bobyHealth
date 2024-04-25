@@ -41,7 +41,7 @@ export default function Home() {
         />
       </div>
       <div>
-        <Link href={"pages"}>testへ</Link>
+        <Link className="text-3xl font-bold text-red-500" href={"pages"}>testへ</Link>
       </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
