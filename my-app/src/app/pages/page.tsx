@@ -1,4 +1,7 @@
+//型を定義する情報をインポートしている
 import { JSX, SVGProps } from "react"
+import { QueryResultRow, sql } from "@vercel/postgres";
+const { rows } = await sql`select * from test order by id;`
 
 /**
  * v0 by Vercel.
@@ -6,6 +9,7 @@ import { JSX, SVGProps } from "react"
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 export default function Component() {
+  console.log(rows);
   return (
     <div className="flex flex-col bg-white">
       <div className="bg-[#4CAF50] px-4 py-2 text-white">
@@ -74,6 +78,9 @@ export default function Component() {
       <div className="flex flex-col items-center justify-center py-8">
         <ChevronLeftIcon className="mb-4 text-4xl text-black" />
         <div className="text-center text-sm text-black">NO DATA.</div>
+      <div>
+      {testConectDB(rows)}
+      </div>
       </div>
     </div>
   )
@@ -82,7 +89,7 @@ export default function Component() {
 function ChevronLeftIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
-      {...props}
+    　{...props}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -307,4 +314,16 @@ function ScaleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
       <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
     </svg>
   )
+}
+
+function testConectDB(rows: QueryResultRow[]) {
+return (
+  <div className="mb-4 text-4xl text-black">
+    {rows.map((row) => (
+      <div key={row.id}>
+        {row.id} - {row.name}
+      </div>
+    ))}
+  </div>
+);
 }
