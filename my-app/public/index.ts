@@ -1,0 +1,1 @@
+export { default as ScaleIcon } from "./scal-icon.svg";

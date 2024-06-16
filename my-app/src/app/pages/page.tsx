@@ -1,7 +1,56 @@
 //型を定義する情報をインポートしている
 import { JSX, SVGProps } from "react"
+import React from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { QueryResultRow, sql } from "@vercel/postgres";
+
+//使用関数のimport
+import { makeDatePart } from "../components/function/formatDate"; 
+
+//import ScaleIcon from '../public/scal-icon.svg';
+import ScaleIcon from '../../../public/scal-icon.svg'
+
+//データ取得
+async function fetchData() {
+  try {
+    await sql.connect();
+    console.log('Connected to database');
+    
+    const { rows } = await sql`select * from test order by id;`
+    console.log(rows);
+
+    await sql.end();
+  } catch (error) {
+    console.error('Error executing query', error);
+  } finally {
+    await sql.end();
+  }
+}
+
+fetchData();
+
+
+
+const { scalRow } = await sql`select * from mtb_category_store;`
 const { rows } = await sql`select * from test order by id;`
+console.log(scalRow);
+console.log(rows);
+
+//日付取得
+const dayPartArray = makeDatePart(); 
+
+//input関数
+const WeightInput = dynamic(() => import('../components/function/WeightInput'), {
+  ssr: false, // サーバーサイドレンダリングを無効にします
+});
+
+const BolderInput = dynamic(() => import('../components/function/BolderInput'), {
+  ssr: false, // サーバーサイドレンダリングを無効にします
+});
+
+
 
 /**
  * v0 by Vercel.
@@ -9,15 +58,14 @@ const { rows } = await sql`select * from test order by id;`
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 export default function Component() {
-  console.log(rows);
   return (
     <div className="flex flex-col bg-white">
       <div className="bg-[#4CAF50] px-4 py-2 text-white">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-bold">25</h1>
+          <h1 className="text-4xl font-bold">{dayPartArray.date}</h1>
           <div className="space-y-1 text-right">
-            <div className="text-lg">2024年4月</div>
-            <div className="text-xs">木曜日</div>
+            <div className="text-lg">{dayPartArray.year}年 {dayPartArray.month}月</div>
+            <div className="text-xs">{dayPartArray.currentWeekDay}</div>
           </div>
         </div>
         <div className="mt-2 flex items-center justify-between">
@@ -28,25 +76,30 @@ export default function Component() {
           <ChevronRightIcon className="text-xl text-black" />
         </div>
       </div>
+
       <div className="px-4 py-2">
+      {/* ここから配列にしたい。 */}
+
         <div className="flex items-center justify-between border-b py-3">
-          <ScaleIcon className="text-2xl text-black" />
+          <div>
+            <ScaleIcon />
+          </div>
           <div className="ml-4 flex-1">
-            <div className="font-semibold text-black">体重 (kg)</div>
-            <div className="text-xl font-bold text-black">0.00</div>
+            <div><WeightInput /></div>
           </div>
           <LineChartIcon className="text-2xl text-black" />
           <ListIcon className="ml-4 text-xl text-black" />
         </div>
+
         <div className="flex items-center justify-between border-b py-3">
           <LoaderIcon className="text-2xl text-black" />
           <div className="ml-4 flex-1">
-            <div className="font-semibold text-black">ボルダリング成功率 (%)</div>
-            <div className="text-xl font-bold text-black">0</div>
+            <div><BolderInput /></div>
           </div>
           <LineChartIcon className="text-2xl text-black" />
           <ListIcon className="ml-4 text-xl text-black" />
         </div>
+
         <div className="flex items-center justify-between border-b py-3">
           <FootprintsIcon className="text-2xl text-black" />
           <div className="ml-4 flex-1">
@@ -75,6 +128,7 @@ export default function Component() {
           <ListIcon className="ml-4 text-xl text-black" />
         </div>
       </div>
+      {/* ここまでを配列にしたい。 */}
       <div className="flex flex-col items-center justify-center py-8">
         <ChevronLeftIcon className="mb-4 text-4xl text-black" />
         <div className="text-center text-sm text-black">NO DATA.</div>
@@ -288,30 +342,6 @@ function MoonStarIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) 
       <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
       <path d="M19 3v4" />
       <path d="M21 5h-4" />
-    </svg>
-  )
-}
-
-
-function ScaleIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
-      <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
-      <path d="M7 21h10" />
-      <path d="M12 3v18" />
-      <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
     </svg>
   )
 }
